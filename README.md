@@ -221,6 +221,37 @@ sudo systemctl restart bookstorage-discord
 
 Le service systemd est défini dans [`deploy/bookstorage-discord.service`](deploy/bookstorage-discord.service). Il démarre **après** `bookstorage.service` mais n’empêche pas BookStorage de tourner si le bot est arrêté.
 
+### Dépannage : le service redémarre en boucle
+
+Le fichier `.env` utilisé par systemd est **`/opt/bookstorage-discord/.env`** (pas celui d’un clone dans votre home).
+
+```bash
+# Voir l’erreur exacte
+sudo journalctl -u bookstorage-discord -n 40 --no-pager
+
+# Tester la config sans systemd (en tant que bookstorage)
+sudo -u bookstorage bash -c 'cd /opt/bookstorage-discord && npm run preflight'
+```
+
+Causes fréquentes :
+
+| Erreur (journal / preflight) | Correction |
+|------------------------------|------------|
+| `DISCORD_TOKEN is required` | Renseigner le token (Portail Discord → Bot) dans `.env` |
+| `DISCORD_CLIENT_ID is required` | Renseigner l’Application ID |
+| `BOOKSTORAGE_BASE_URL must be a valid URL` | URL HTTPS réelle, sans `/` final (ex. `https://books.example.com`) |
+| `TOKEN_ENCRYPTION_KEY must be 32 bytes` | `openssl rand -base64 32` — ne pas tronquer la clé |
+| `Could not locate the bindings file` (better-sqlite3) | Recompiler : `cd /opt/bookstorage-discord && sudo -u bookstorage npm rebuild better-sqlite3` |
+| `An invalid token was provided` | Token Discord invalide ou révoqué — en régénérer sur le portail |
+
+Après correction du `.env` :
+
+```bash
+sudo systemctl daemon-reload   # si le fichier .service a changé
+sudo systemctl restart bookstorage-discord
+sudo journalctl -u bookstorage-discord -f
+```
+
 ### Docker (optionnel)
 
 ```dockerfile

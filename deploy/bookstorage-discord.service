@@ -9,9 +9,12 @@ User=bookstorage
 Group=bookstorage
 WorkingDirectory=/opt/bookstorage-discord
 EnvironmentFile=-/opt/bookstorage-discord/.env
-ExecStart=/usr/bin/node dist/index.js
+ExecStartPre=/usr/bin/node /opt/bookstorage-discord/dist/preflight.js
+ExecStart=/usr/bin/node /opt/bookstorage-discord/dist/index.js
 Restart=on-failure
 RestartSec=10
+StartLimitIntervalSec=120
+StartLimitBurst=5
 
 StandardOutput=journal
 StandardError=journal

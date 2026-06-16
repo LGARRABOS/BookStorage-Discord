@@ -12,6 +12,7 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "register-commands": "tsx scripts/register-commands.ts",
+    "preflight": "node dist/preflight.js",
     "test": "vitest run",
     "lint": "eslint src scripts tests && prettier --check \"src/**/*.ts\" \"scripts/**/*.ts\" \"tests/**/*.ts\" \"*.{json,md,yml}\""
   },
