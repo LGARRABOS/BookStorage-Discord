@@ -117,13 +117,18 @@ else
 	git clone "$REPO_URL" "$APP_DIR"
 fi
 mkdir -p "$APP_DIR/data"
+chown -R "$APP_USER:$APP_GROUP" "$APP_DIR"
 print_ok "Dépôt à jour"
 
-# --- Build ---
-print_step "5/6" "npm ci && build..."
-cd "$APP_DIR"
-npm ci
-npm run build
+# --- Build (toujours en tant que bookstorage, dans $APP_DIR) ---
+print_step "5/6" "npm ci && build (utilisateur $APP_USER)..."
+run_as_app() {
+	sudo -u "$APP_USER" bash -c "cd '$APP_DIR' && $*"
+}
+run_as_app "npm ci"
+run_as_app "npm run build"
+[ -f "$APP_DIR/dist/index.js" ] || die "Build échoué : $APP_DIR/dist/index.js introuvable"
+[ -f "$APP_DIR/dist/preflight.js" ] || die "Build échoué : $APP_DIR/dist/preflight.js introuvable"
 print_ok "Build terminé"
 
 # --- .env minimal si absent ---
@@ -150,8 +155,6 @@ else
 fi
 
 chown -R "$APP_USER:$APP_GROUP" "$APP_DIR"
-
-# --- systemd ---
 print_step "6/6" "Service systemd..."
 cp "$APP_DIR/deploy/bookstorage-discord.service" "/etc/systemd/system/${SERVICE_NAME}.service"
 systemctl daemon-reload
@@ -163,6 +166,7 @@ printf "Prochaines étapes :\n"
 printf "  1. Éditer ${BOLD}$APP_DIR/.env${NC} (token Discord, CLIENT_ID, BOOKSTORAGE_BASE_URL)\n"
 printf "  2. En tant que $APP_USER : enregistrer les commandes slash\n"
 printf "       sudo -u $APP_USER bash -c 'cd $APP_DIR && npm run register-commands'\n"
-printf "  3. Vérifier : ${BOLD}sudo -u $APP_USER npm run preflight${NC} (dans $APP_DIR)\n"
+printf "  3. Vérifier : ${BOLD}sudo -u $APP_USER bash -c 'cd $APP_DIR && npm run preflight'${NC}\n"
 printf "  4. Démarrer : ${BOLD}systemctl start $SERVICE_NAME${NC}\n"
-printf "  5. Logs : ${BOLD}journalctl -u $SERVICE_NAME -f${NC}\n\n"
+printf "  5. Logs : ${BOLD}journalctl -u $SERVICE_NAME -f${NC}\n"
+printf "\n${YELLOW}Note :${NC} le service utilise ${BOLD}$APP_DIR${NC}, pas un clone dans /tmp.\n\n"

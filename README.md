@@ -95,20 +95,16 @@ Installation typique : **même machine Linux** que BookStorage (`/opt/bookstorag
 
 ### Installation automatique (recommandée)
 
+Le service systemd utilise **`/opt/bookstorage-discord`**. Un clone dans `/tmp` sert uniquement à lancer `install.sh` — toutes les commandes `npm` et le `.env` de prod doivent être dans `/opt/bookstorage-discord`.
+
 ```bash
-# Sur le serveur (root)
-git clone https://github.com/LGARRABOS/BookStorage-Discord.git /tmp/BookStorage-Discord
-cd /tmp/BookStorage-Discord
+# Depuis n'importe quel clone (ex. /tmp/BookStorage-Discord)
+cd /tmp/BookStorage-Discord   # ou où vous avez cloné
+git pull origin main
 sudo bash deploy/install.sh
 ```
 
-Le script :
-
-- installe Node.js 20+ si nécessaire ;
-- clone ou met à jour `/opt/bookstorage-discord` ;
-- exécute `npm ci` et `npm run build` ;
-- crée `/opt/bookstorage-discord/data` et un `.env` initial (avec `TOKEN_ENCRYPTION_KEY` généré) ;
-- installe et active le service `bookstorage-discord` (sans le démarrer tant que `.env` est incomplet).
+`install.sh` clone ou met à jour `/opt/bookstorage-discord`, compile en tant que `bookstorage`, et installe systemd.
 
 ### Installation manuelle
 
@@ -221,19 +217,36 @@ sudo systemctl restart bookstorage-discord
 
 Le service systemd est défini dans [`deploy/bookstorage-discord.service`](deploy/bookstorage-discord.service). Il démarre **après** `bookstorage.service` mais n’empêche pas BookStorage de tourner si le bot est arrêté.
 
-### Dépannage : le service redémarre en boucle
-
-Le fichier `.env` utilisé par systemd est **`/opt/bookstorage-discord/.env`** (pas celui d’un clone dans votre home).
+### Mise à jour du bot
 
 ```bash
+cd /opt/bookstorage-discord
+sudo git pull origin main
+sudo bash deploy/update.sh --restart
+```
+
+Ou réinstaller via `sudo bash deploy/install.sh` depuis un clone temporaire.
+
+### Dépannage : le service redémarre en boucle
+
+Le fichier `.env` et le build utilisés par systemd sont dans **`/opt/bookstorage-discord`** uniquement.
+
+```bash
+# Arrêter la boucle de redémarrage le temps de corriger
+sudo systemctl stop bookstorage-discord
+
+# Rebuild au bon endroit
+sudo bash /opt/bookstorage-discord/deploy/install.sh
+# ou : sudo bash deploy/update.sh   (depuis /opt/bookstorage-discord)
+
 # Voir l’erreur exacte
 sudo journalctl -u bookstorage-discord -n 40 --no-pager
 
-# Tester la config sans systemd (en tant que bookstorage)
+# Tester la config (depuis /opt, pas /tmp)
 sudo -u bookstorage bash -c 'cd /opt/bookstorage-discord && npm run preflight'
 ```
 
-Causes fréquentes :
+Erreur `Cannot find module '/opt/bookstorage-discord/dist/index.js'` → le build n’a pas été fait dans `/opt` (souvent `npm` lancé dans `/tmp/BookStorage-Discord` en root). Relancer `sudo bash deploy/install.sh`.
 
 | Erreur (journal / preflight) | Correction |
 |------------------------------|------------|
