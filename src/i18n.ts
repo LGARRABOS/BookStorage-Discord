@@ -3,7 +3,7 @@ import type { Locale } from './config.js';
 const catalog: Record<Locale, Record<string, string>> = {
   fr: {
     link_success:
-      'Compte BookStorage lié avec succès. Vous pouvez utiliser `/reading`, `/stats` et `/chapter`.',
+      'Compte BookStorage lié avec succès. Utilisez `/reading`, `/plus`, `/lien`, `/status` ou `/stats`.',
     link_invalid_token:
       'Jeton API invalide ou inaccessible. Vérifiez que le bot utilise la même URL que ce site (BOOKSTORAGE_BASE_URL) et que le jeton inclut lecture + écriture.',
     not_linked:
@@ -17,6 +17,22 @@ const catalog: Record<Locale, Record<string, string>> = {
     reading_empty: 'Aucune œuvre en cours de lecture.',
     reading_title: 'En cours de lecture',
     reading_more: '… et d’autres œuvres (affinez avec une recherche sur le site).',
+    reading_buttons_hint: 'Cliquez sur un bouton pour avancer d’un chapitre, ou utilisez `/plus`.',
+    reading_open_link: 'Lire',
+    lien_no_link: 'Aucun lien enregistré pour « {title} ».',
+    lien_field_link: 'Lien',
+    lien_field_chapter: 'Chapitre',
+    lien_field_status: 'Disponibilité',
+    lien_status_unknown: '⚪ Non vérifié',
+    status_app_title: 'BookStorage',
+    status_app_online: '🟢 En ligne',
+    status_app_degraded: '🟡 Base de données indisponible',
+    status_app_unreachable: '🔴 Injoignable ({url})',
+    status_field_state: 'État',
+    status_field_version: 'Version',
+    status_field_uptime: 'Uptime',
+    status_sites_title: 'Sites de lecture',
+    status_sites_empty: 'Aucun site configuré (Profil → Sites de lecture sur le site).',
     stats_title: 'Statistiques de lecture',
     stats_works: 'Œuvres',
     stats_chapters: 'Chapitres lus',
@@ -29,7 +45,7 @@ const catalog: Record<Locale, Record<string, string>> = {
     unknown_error: 'Une erreur inattendue est survenue.',
   },
   en: {
-    link_success: 'BookStorage account linked. You can use `/reading`, `/stats`, and `/chapter`.',
+    link_success: 'BookStorage account linked. Use `/reading`, `/plus`, `/lien`, `/status`, or `/stats`.',
     link_invalid_token:
       'Invalid or unreachable API token. Ensure the bot BOOKSTORAGE_BASE_URL matches this site and the token has read + write scopes.',
     not_linked:
@@ -42,6 +58,22 @@ const catalog: Record<Locale, Record<string, string>> = {
     reading_empty: 'No works currently reading.',
     reading_title: 'Currently reading',
     reading_more: '… and more works (refine on the website).',
+    reading_buttons_hint: 'Click a button to advance one chapter, or use `/plus`.',
+    reading_open_link: 'Read',
+    lien_no_link: 'No reading link saved for "{title}".',
+    lien_field_link: 'Link',
+    lien_field_chapter: 'Chapter',
+    lien_field_status: 'Availability',
+    lien_status_unknown: '⚪ Not checked',
+    status_app_title: 'BookStorage',
+    status_app_online: '🟢 Online',
+    status_app_degraded: '🟡 Database unavailable',
+    status_app_unreachable: '🔴 Unreachable ({url})',
+    status_field_state: 'State',
+    status_field_version: 'Version',
+    status_field_uptime: 'Uptime',
+    status_sites_title: 'Reading sites',
+    status_sites_empty: 'No sites configured (Profile → Reading sites on the website).',
     stats_title: 'Reading stats',
     stats_works: 'Works',
     stats_chapters: 'Chapters read',

@@ -1,6 +1,8 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js';
 import { loadConfig, getEncryptionKey } from './config.js';
-import { commandsByName } from './commands/index.js';
+import { autocompleteCommandNames, commandsByName } from './commands/index.js';
+import { handleReadingWorksAutocomplete } from './commands/autocomplete-works.js';
+import { handleWorkButton } from './commands/buttons.js';
 import { LinkStorage } from './storage/links.js';
 
 async function main(): Promise<void> {
@@ -21,6 +23,27 @@ async function main(): Promise<void> {
   });
 
   client.on(Events.InteractionCreate, async (interaction) => {
+    const ctx = { config, links };
+
+    if (interaction.isAutocomplete()) {
+      if (autocompleteCommandNames.has(interaction.commandName)) {
+        await handleReadingWorksAutocomplete(interaction, ctx);
+      }
+      return;
+    }
+
+    if (interaction.isButton()) {
+      try {
+        await handleWorkButton(interaction, ctx);
+      } catch (error) {
+        console.error('Button interaction failed:', error);
+        if (!interaction.replied && !interaction.deferred) {
+          await interaction.reply({ content: 'Internal error.', ephemeral: true });
+        }
+      }
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) {
       return;
     }
@@ -31,7 +54,7 @@ async function main(): Promise<void> {
     }
 
     try {
-      await command.execute(interaction, { config, links });
+      await command.execute(interaction, ctx);
     } catch (error) {
       console.error(`Command /${interaction.commandName} failed:`, error);
       const payload = { content: 'Internal error.', ephemeral: true };

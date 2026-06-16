@@ -1,6 +1,6 @@
 # BookStorage-Discord
 
-Bot Discord **optionnel** pour [BookStorage](https://github.com/LGARRABOS/BookStorage) : actions rapides de lecture via commandes slash (`/reading`, `/stats`, `/chapter`).
+Bot Discord **optionnel** pour [BookStorage](https://github.com/LGARRABOS/BookStorage) : actions rapides de lecture via commandes slash (`/reading`, `/plus`, `/stats`).
 
 Une instance bot par instance BookStorage — le bot consomme uniquement l’API REST documentée ([OpenAPI](https://github.com/LGARRABOS/BookStorage/blob/main/docs/openapi.yaml)).
 
@@ -30,7 +30,7 @@ Une instance bot par instance BookStorage — le bot consomme uniquement l’API
 - Jetons API activés sur BookStorage (Profil → Jetons API)
 - Scopes recommandés :
   - `works:read` — `/reading`, `/stats`, validation `/link`
-  - `works:write` — `/chapter` (+1 / −1)
+  - `works:write` — `/plus`, `/chapter`, boutons sur `/reading`
 
 Sur le serveur de prod, `BOOKSTORAGE_BASE_URL` doit être **la même URL publique** que `BOOKSTORAGE_PUBLIC_ORIGIN` de BookStorage (ex. `https://books.example.com`, sans slash final). Le bot appelle l’API en local ou via le reverse-proxy comme n’importe quel client HTTP.
 
@@ -76,7 +76,7 @@ Avec `DISCORD_GUILD_ID` renseigné, les commandes slash apparaissent **immédiat
 2. Renseigner `.env` avec le token, le client ID, le guild ID de test, et `BOOKSTORAGE_BASE_URL` pointant vers votre prod (ou staging)
 3. `npm run register-commands` puis démarrer le bot
 4. Sur le serveur ou en MP : `/link token:bs_…` (jeton créé sur BookStorage) — la réponse est **visible par vous seul**
-5. Tester `/reading`, `/stats`, `/chapter titre:… action:+1` sur le serveur de test
+5. Tester `/reading` (boutons +1), `/plus`, `/stats` sur le serveur de test
 
 ### 4. Passage en **production** Discord
 
@@ -195,12 +195,17 @@ Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra a
 
 ## Commandes
 
-| Commande                        | Description                                    |
-| ------------------------------- | ---------------------------------------------- |
-| `/link token:`                  | Lie le compte (réponse éphémère, salon ou MP)  |
-| `/reading`                      | Œuvres en cours (`status=reading`, 15 max)     |
-| `/stats`                        | Statistiques globales                          |
-| `/chapter titre: action:+1\|-1` | Incrémente ou décrémente un chapitre par titre |
+| Commande | Description |
+| -------- | ----------- |
+| `/link token:` | Lie le compte (réponse éphémère, salon ou MP) |
+| `/reading` | Lectures en cours avec **boutons +1** (jusqu’à 10 œuvres) |
+| `/plus oeuvre:` | Avance d’un chapitre — liste déroulante des œuvres en cours |
+| `/chapter oeuvre:` | Comme `/plus`, avec option `action:-1` pour reculer |
+| `/lien oeuvre:` | Lien de lecture d’une œuvre + disponibilité (🟢/🔴/🟡) |
+| `/status` | État de BookStorage (version, uptime) + sites de lecture |
+| `/stats` | Statistiques globales |
+
+**Astuce** : pour le cas le plus courant (+1), préférez `/reading` (un clic) ou `/plus` (autocomplétion). `/chapter` reste utile pour reculer d’un chapitre. Les pastilles de couleur sur `/reading` indiquent si le lien de lecture répond.
 
 ---
 
@@ -297,7 +302,7 @@ npm run dev
 1. Jeton API BookStorage (scopes read + write)
 2. `DISCORD_GUILD_ID` = serveur de test
 3. DM : `/link token:bs_…` → succès
-4. `/reading`, `/stats`, `/chapter titre:… action:+1`
+4. `/reading` (boutons), `/plus`, `/stats`
 5. Révoquer le jeton sur le site → le bot refuse proprement
 
 ---

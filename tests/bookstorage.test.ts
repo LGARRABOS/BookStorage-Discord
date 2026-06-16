@@ -5,6 +5,7 @@ import {
   resolveWorkByTitle,
   type FetchFn,
 } from '../src/api/bookstorage.js';
+import { resolveWorkOption } from '../src/commands/work-chapter.js';
 
 const BASE_URL = 'https://books.example.com';
 const TOKEN = 'bs_test_token';
@@ -161,5 +162,29 @@ describe('resolveWorkByTitle', () => {
     const result = await resolveWorkByTitle(client, 'Solo');
 
     expect(result).toEqual({ ok: false, reason: 'ambiguous', title: 'Solo', works });
+  });
+});
+
+describe('resolveWorkOption', () => {
+  let fetchMock: ReturnType<typeof vi.fn<FetchFn>>;
+
+  beforeEach(() => {
+    fetchMock = vi.fn<FetchFn>();
+  });
+
+  it('resolves work by numeric id from autocomplete', async () => {
+    const work = { id: 42, title: 'Tower of God', chapter: 5 };
+    fetchMock.mockResolvedValue(jsonResponse({ data: work }));
+
+    const client = new BookStorageClient(BASE_URL, TOKEN, fetchMock);
+    const result = await resolveWorkOption(client, '42');
+
+    expect(result).toEqual({ ok: true, work });
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${BASE_URL}/api/works/42`,
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: `Bearer ${TOKEN}` }),
+      }),
+    );
   });
 });

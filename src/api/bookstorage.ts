@@ -8,6 +8,28 @@ export interface Work {
   rating?: number;
   notes?: string;
   updated_at?: string;
+  reading_site_id?: number;
+  link_status?: 'up' | 'down' | 'degraded' | 'unknown';
+}
+
+export interface ReadingSite {
+  id: number;
+  name: string;
+  base_url: string;
+  probe_status: 'up' | 'down' | 'degraded' | 'unknown';
+  last_probe_at?: string;
+  probe_http_status?: number | null;
+  probe_detail?: string;
+}
+
+export interface ReadingSitesResponse {
+  data: ReadingSite[];
+}
+
+export interface HealthData {
+  ok: boolean;
+  version: string;
+  uptime_sec: number;
 }
 
 export interface ListMeta {
@@ -147,6 +169,41 @@ export class BookStorageClient {
 
   decrement(id: number): Promise<void> {
     return this.request<void>(`/api/decrement/${id}`, { method: 'POST' });
+  }
+
+  listReadingSites(): Promise<ReadingSitesResponse> {
+    return this.request<ReadingSitesResponse>('/api/reading-sites');
+  }
+}
+
+export async function fetchBookStorageHealth(
+  baseUrl: string,
+  fetchFn: FetchFn = fetch,
+): Promise<HealthData> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), HTTP_TIMEOUT_MS);
+
+  try {
+    const response = await fetchFn(`${baseUrl}/healthz`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new BookStorageApiError('unreachable', response.status);
+    }
+
+    return (await response.json()) as HealthData;
+  } catch (error) {
+    if (error instanceof BookStorageApiError) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new BookStorageApiError('timeout', 408);
+    }
+    throw new BookStorageApiError('unreachable', 0);
+  } finally {
+    clearTimeout(timeout);
   }
 }
 

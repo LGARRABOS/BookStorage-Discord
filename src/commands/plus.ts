@@ -10,8 +10,8 @@ import {
   resolveWorkOption,
 } from './work-chapter.js';
 
-export const chapterCommand: BotCommand = {
-  name: 'chapter',
+export const plusCommand: BotCommand = {
+  name: 'plus',
 
   async execute(interaction: ChatInputCommandInteraction, ctx: CommandContext): Promise<void> {
     const locale = ctx.config.DEFAULT_LOCALE;
@@ -21,8 +21,6 @@ export const chapterCommand: BotCommand = {
     }
 
     const workRef = interaction.options.getString('oeuvre', true).trim();
-    const action = interaction.options.getString('action') ?? '+1';
-    const delta = action === '-1' ? -1 : 1;
 
     await interaction.deferReply({ ephemeral: true });
 
@@ -37,7 +35,7 @@ export const chapterCommand: BotCommand = {
         return;
       }
 
-      const updated = await changeWorkChapter(client, resolved.work.id, delta);
+      const updated = await changeWorkChapter(client, resolved.work.id, 1);
       await interaction.editReply({ content: formatChapterResult(locale, updated) });
     } catch (error) {
       await replyChapterError(interaction, locale, error);
@@ -45,23 +43,13 @@ export const chapterCommand: BotCommand = {
   },
 };
 
-export const chapterCommandData = new SlashCommandBuilder()
-  .setName('chapter')
-  .setDescription('Modifier le chapitre d’une œuvre (+1 ou −1)')
+export const plusCommandData = new SlashCommandBuilder()
+  .setName('plus')
+  .setDescription('Avancer d’un chapitre (+1) sur une œuvre en cours')
   .addStringOption((option) =>
     option
       .setName('oeuvre')
       .setDescription('Choisissez dans la liste (œuvres « en cours »)')
       .setRequired(true)
       .setAutocomplete(true),
-  )
-  .addStringOption((option) =>
-    option
-      .setName('action')
-      .setDescription('Par défaut : +1')
-      .setRequired(false)
-      .addChoices(
-        { name: '+1 chapitre', value: '+1' },
-        { name: '−1 chapitre', value: '-1' },
-      ),
   );
