@@ -47,15 +47,26 @@ Configurez l’application **avant** ou **pendant** l’installation sur le serv
 3. Onglet **General Information** → copier **Application ID** → `DISCORD_CLIENT_ID`
 4. Onglet **Bot** → **Privileged Gateway Intents** : **ne rien activer** (le bot n’utilise que l’intent `Guilds`)
 
-### 2. Inviter le bot sur un serveur de **test**
+### 2. Inviter le bot **sur le serveur** (membre visible)
+
+Les commandes slash peuvent fonctionner sans que le bot apparaisse dans la liste des membres à droite si l’app a seulement été **installée pour vous** (flux « Installer l’application »). Pour que **BookStorage Bot** apparaisse en ligne comme Rand ou Dice Maiden, il faut l’**ajouter au serveur** avec le scope `bot`.
 
 1. Onglet **OAuth2 → URL Generator**
-2. Scopes cochés : `bot`, `applications.commands`
-3. Permissions bot : aucune permission salon obligatoire (les slash commands et `/link` en DM suffisent)
-4. Copier l’URL générée, ouvrir dans le navigateur, choisir votre **serveur de test**
-5. Récupérer l’**ID du serveur de test** :
-   - Discord → Paramètres utilisateur → Avancé → **Mode développeur** : activé
-   - Clic droit sur l’icône du serveur → **Copier l’identifiant du serveur** → `DISCORD_GUILD_ID`
+2. Scopes cochés : **`bot`** et **`applications.commands`** (les deux)
+3. Permissions bot : aucune obligatoire (laisser à 0 ou cocher « View Channels » si besoin)
+4. Copier l’URL générée, ouvrir dans le navigateur
+5. Choisir le serveur (ex. **Jackie 2.0**) → **Autoriser**
+6. Vérifier : le bot doit apparaître sous **En ligne** dans la liste des membres (redémarrer le client Discord si besoin)
+
+URL manuelle (remplacer `CLIENT_ID`) :
+
+```
+https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=0&scope=bot%20applications.commands
+```
+
+> Si le bot répond aux commandes mais n’est pas dans la liste : répétez l’étape 4–5 — l’invitation `bot` n’a probablement pas été faite sur ce serveur.
+
+7. Récupérer l’**ID du serveur** (mode développeur) → `DISCORD_GUILD_ID` pour des commandes slash instantanées
 
 Avec `DISCORD_GUILD_ID` renseigné, les commandes slash apparaissent **immédiatement** sur ce serveur après `npm run register-commands`.
 
@@ -207,25 +218,12 @@ Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra a
 ### Mise à jour du bot
 
 ```bash
-cd /opt/bookstorage-discord
-sudo -u bookstorage git pull --ff-only origin main
-sudo -u bookstorage npm ci
-sudo -u bookstorage npm run build
-sudo -u bookstorage npm run register-commands   # si les commandes ont changé
-sudo systemctl restart bookstorage-discord
-```
-
-Le service systemd est défini dans [`deploy/bookstorage-discord.service`](deploy/bookstorage-discord.service). Il démarre **après** `bookstorage.service` mais n’empêche pas BookStorage de tourner si le bot est arrêté.
-
-### Mise à jour du bot
-
-```bash
-cd /opt/bookstorage-discord
-sudo git pull origin main
-sudo bash deploy/update.sh --restart
+sudo bash /opt/bookstorage-discord/deploy/update.sh --restart
 ```
 
 Ou réinstaller via `sudo bash deploy/install.sh` depuis un clone temporaire.
+
+Le service systemd est défini dans [`deploy/bookstorage-discord.service`](deploy/bookstorage-discord.service). Il démarre **après** `bookstorage.service` mais n’empêche pas BookStorage de tourner si le bot est arrêté.
 
 ### Dépannage : le service redémarre en boucle
 

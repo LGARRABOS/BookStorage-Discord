@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js';
 import { loadConfig, getEncryptionKey } from './config.js';
 import { commandsByName } from './commands/index.js';
 import { LinkStorage } from './storage/links.js';
@@ -14,6 +14,10 @@ async function main(): Promise<void> {
 
   client.once(Events.ClientReady, (readyClient) => {
     console.log(`Logged in as ${readyClient.user.tag}`);
+    void readyClient.user.setPresence({
+      status: 'online',
+      activities: [{ name: 'BookStorage', type: ActivityType.Watching }],
+    });
   });
 
   client.on(Events.InteractionCreate, async (interaction) => {
