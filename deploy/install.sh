@@ -47,7 +47,26 @@ fi
 
 printf "\n${BOLD}BookStorage-Discord — installation${NC}\n\n"
 
-# --- Node.js 20+ ---
+# --- Node.js 20+ (Debian/Ubuntu vs RHEL/Rocky/Alma) ---
+install_nodejs() {
+	if [ "$PKG_MGR" = "apt-get" ]; then
+		curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+		apt-get install -y nodejs
+		return
+	fi
+
+	# Rocky Linux, RHEL, AlmaLinux, CentOS — dépôt RPM NodeSource
+	if curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -; then
+		$PKG_MGR install -y nodejs
+		return
+	fi
+
+	print_warn "NodeSource RPM indisponible — tentative module dnf nodejs:20..."
+	$PKG_MGR module reset nodejs -y 2>/dev/null || true
+	$PKG_MGR module enable nodejs:20 -y 2>/dev/null || true
+	$PKG_MGR install -y nodejs npm
+}
+
 print_step "1/6" "Vérification de Node.js 20+..."
 need_node_install=false
 if command -v node &>/dev/null; then
@@ -60,16 +79,14 @@ else
 fi
 
 if [ "$need_node_install" = true ]; then
-	print_warn "Node.js 20+ requis — installation via NodeSource..."
-	curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-	if [ "$PKG_MGR" = "apt-get" ]; then
-		apt-get install -y nodejs
-	else
-		# RHEL family: nodesource setup_20.x works on RPM too
-		$PKG_MGR install -y nodejs || die "Installez nodejs 20+ manuellement"
-	fi
+	print_warn "Node.js 20+ requis — installation ($PKG_MGR)..."
+	install_nodejs
 fi
-node -v || die "node introuvable après installation"
+command -v node &>/dev/null || die "node introuvable après installation"
+NODE_MAJOR="$(node -p "process.versions.node.split('.')[0]")"
+if [ "$NODE_MAJOR" -lt 20 ] 2>/dev/null; then
+	die "Node.js 20+ requis (version actuelle : $(node -v))"
+fi
 print_ok "Node $(node -v)"
 
 # --- Utilisateur bookstorage (réutilise celui de BookStorage si présent) ---
@@ -88,7 +105,7 @@ if [ "$PKG_MGR" = "apt-get" ]; then
 	apt-get update -qq
 	apt-get install -y git build-essential python3
 else
-	$PKG_MGR install -y git gcc-c++ make python3
+	$PKG_MGR install -y git gcc-c++ make python3 python3-devel
 fi
 print_ok "Dépendances système OK"
 

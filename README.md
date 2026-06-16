@@ -91,6 +91,8 @@ Inviter le bot sur le(s) serveur(s) prod avec la même URL OAuth2 (`bot` + `appl
 
 Installation typique : **même machine Linux** que BookStorage (`/opt/bookstorage`), utilisateur système `bookstorage` partagé, service systemd séparé.
 
+**Systèmes supportés** : Debian/Ubuntu, Rocky Linux / RHEL / AlmaLinux / CentOS (Node.js via dépôt RPM NodeSource ou module `nodejs:20`).
+
 ### Installation automatique (recommandée)
 
 ```bash
