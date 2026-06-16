@@ -45,7 +45,8 @@ const catalog: Record<Locale, Record<string, string>> = {
     unknown_error: 'Une erreur inattendue est survenue.',
   },
   en: {
-    link_success: 'BookStorage account linked. Use `/reading`, `/plus`, `/lien`, `/status`, or `/stats`.',
+    link_success:
+      'BookStorage account linked. Use `/reading`, `/plus`, `/lien`, `/status`, or `/stats`.',
     link_invalid_token:
       'Invalid or unreachable API token. Ensure the bot BOOKSTORAGE_BASE_URL matches this site and the token has read + write scopes.',
     not_linked:

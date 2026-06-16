@@ -60,8 +60,5 @@ export const chapterCommandData = new SlashCommandBuilder()
       .setName('action')
       .setDescription('Par défaut : +1')
       .setRequired(false)
-      .addChoices(
-        { name: '+1 chapitre', value: '+1' },
-        { name: '−1 chapitre', value: '-1' },
-      ),
+      .addChoices({ name: '+1 chapitre', value: '+1' }, { name: '−1 chapitre', value: '-1' }),
   );

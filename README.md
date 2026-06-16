@@ -82,10 +82,10 @@ Avec `DISCORD_GUILD_ID` renseigné, les commandes slash apparaissent **immédiat
 
 Deux options :
 
-| Mode | `DISCORD_GUILD_ID` | Usage |
-|------|-------------------|--------|
-| **Serveur unique** | ID de votre serveur communautaire prod | Commandes visibles tout de suite sur ce serveur |
-| **Global** | Ligne commentée / supprimée | Commandes sur tous les serveurs où le bot est invité (~1 h de propagation) |
+| Mode               | `DISCORD_GUILD_ID`                     | Usage                                                                      |
+| ------------------ | -------------------------------------- | -------------------------------------------------------------------------- |
+| **Serveur unique** | ID de votre serveur communautaire prod | Commandes visibles tout de suite sur ce serveur                            |
+| **Global**         | Ligne commentée / supprimée            | Commandes sur tous les serveurs où le bot est invité (~1 h de propagation) |
 
 Après changement, relancer :
 
@@ -138,15 +138,15 @@ sudo systemctl daemon-reload && sudo systemctl enable bookstorage-discord
 
 Fichier : `/opt/bookstorage-discord/.env` (permissions `600`, propriétaire `bookstorage`).
 
-| Variable               | Description                                                                 |
-| ---------------------- | --------------------------------------------------------------------------- |
-| `DISCORD_TOKEN`        | Token du bot (Portail → Bot)                                                |
-| `DISCORD_CLIENT_ID`    | Application ID (Portail → General Information)                              |
-| `DISCORD_GUILD_ID`     | _(recommandé en test)_ ID du serveur Discord — commandes instantanées       |
-| `BOOKSTORAGE_BASE_URL` | URL publique BookStorage, **identique** à `BOOKSTORAGE_PUBLIC_ORIGIN`       |
-| `LINK_DB_PATH`         | Chemin SQLite (défaut `/opt/bookstorage-discord/data/links.db` en prod)     |
+| Variable               | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `DISCORD_TOKEN`        | Token du bot (Portail → Bot)                                                 |
+| `DISCORD_CLIENT_ID`    | Application ID (Portail → General Information)                               |
+| `DISCORD_GUILD_ID`     | _(recommandé en test)_ ID du serveur Discord — commandes instantanées        |
+| `BOOKSTORAGE_BASE_URL` | URL publique BookStorage, **identique** à `BOOKSTORAGE_PUBLIC_ORIGIN`        |
+| `LINK_DB_PATH`         | Chemin SQLite (défaut `/opt/bookstorage-discord/data/links.db` en prod)      |
 | `TOKEN_ENCRYPTION_KEY` | Clé 32 octets base64 — générée par `install.sh` ou `openssl rand -base64 32` |
-| `DEFAULT_LOCALE`       | `fr` ou `en`                                                                |
+| `DEFAULT_LOCALE`       | `fr` ou `en`                                                                 |
 
 Exemple prod (serveur de test Discord, API prod) :
 
@@ -195,15 +195,15 @@ Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra a
 
 ## Commandes
 
-| Commande | Description |
-| -------- | ----------- |
-| `/link token:` | Lie le compte (réponse éphémère, salon ou MP) |
-| `/reading` | Lectures en cours avec **boutons +1** (jusqu’à 10 œuvres) |
-| `/plus oeuvre:` | Avance d’un chapitre — liste déroulante des œuvres en cours |
-| `/chapter oeuvre:` | Comme `/plus`, avec option `action:-1` pour reculer |
-| `/lien oeuvre:` | Lien de lecture d’une œuvre + disponibilité (🟢/🔴/🟡) |
-| `/status` | État de BookStorage (version, uptime) + sites de lecture |
-| `/stats` | Statistiques globales |
+| Commande           | Description                                                 |
+| ------------------ | ----------------------------------------------------------- |
+| `/link token:`     | Lie le compte (réponse éphémère, salon ou MP)               |
+| `/reading`         | Lectures en cours avec **boutons +1** (jusqu’à 10 œuvres)   |
+| `/plus oeuvre:`    | Avance d’un chapitre — liste déroulante des œuvres en cours |
+| `/chapter oeuvre:` | Comme `/plus`, avec option `action:-1` pour reculer         |
+| `/lien oeuvre:`    | Lien de lecture d’une œuvre + disponibilité (🟢/🔴/🟡)      |
+| `/status`          | État de BookStorage (version, uptime) + sites de lecture    |
+| `/stats`           | Statistiques globales                                       |
 
 **Astuce** : pour le cas le plus courant (+1), préférez `/reading` (un clic) ou `/plus` (autocomplétion). `/chapter` reste utile pour reculer d’un chapitre. Les pastilles de couleur sur `/reading` indiquent si le lien de lecture répond.
 
@@ -211,13 +211,13 @@ Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra a
 
 ## Exploitation (systemd)
 
-| Action              | Commande                                      |
-| ------------------- | --------------------------------------------- |
-| Démarrer            | `sudo systemctl start bookstorage-discord`    |
-| Arrêter             | `sudo systemctl stop bookstorage-discord`     |
-| Redémarrer          | `sudo systemctl restart bookstorage-discord`  |
-| Logs                | `sudo journalctl -u bookstorage-discord -f`   |
-| Mise à jour         | Voir ci-dessous                               |
+| Action      | Commande                                     |
+| ----------- | -------------------------------------------- |
+| Démarrer    | `sudo systemctl start bookstorage-discord`   |
+| Arrêter     | `sudo systemctl stop bookstorage-discord`    |
+| Redémarrer  | `sudo systemctl restart bookstorage-discord` |
+| Logs        | `sudo journalctl -u bookstorage-discord -f`  |
+| Mise à jour | Voir ci-dessous                              |
 
 ### Mise à jour du bot
 
@@ -250,14 +250,14 @@ sudo -u bookstorage bash -c 'cd /opt/bookstorage-discord && npm run preflight'
 
 Erreur `Cannot find module '/opt/bookstorage-discord/dist/index.js'` → le build n’a pas été fait dans `/opt` (souvent `npm` lancé dans `/tmp/BookStorage-Discord` en root). Relancer `sudo bash deploy/install.sh`.
 
-| Erreur (journal / preflight) | Correction |
-|------------------------------|------------|
-| `DISCORD_TOKEN is required` | Renseigner le token (Portail Discord → Bot) dans `.env` |
-| `DISCORD_CLIENT_ID is required` | Renseigner l’Application ID |
-| `BOOKSTORAGE_BASE_URL must be a valid URL` | URL HTTPS réelle, sans `/` final (ex. `https://books.example.com`) |
-| `TOKEN_ENCRYPTION_KEY must be 32 bytes` | `openssl rand -base64 32` — ne pas tronquer la clé |
+| Erreur (journal / preflight)                          | Correction                                                                                   |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `DISCORD_TOKEN is required`                           | Renseigner le token (Portail Discord → Bot) dans `.env`                                      |
+| `DISCORD_CLIENT_ID is required`                       | Renseigner l’Application ID                                                                  |
+| `BOOKSTORAGE_BASE_URL must be a valid URL`            | URL HTTPS réelle, sans `/` final (ex. `https://books.example.com`)                           |
+| `TOKEN_ENCRYPTION_KEY must be 32 bytes`               | `openssl rand -base64 32` — ne pas tronquer la clé                                           |
 | `Could not locate the bindings file` (better-sqlite3) | Recompiler : `cd /opt/bookstorage-discord && sudo -u bookstorage npm rebuild better-sqlite3` |
-| `An invalid token was provided` | Token Discord invalide ou révoqué — en régénérer sur le portail |
+| `An invalid token was provided`                       | Token Discord invalide ou révoqué — en régénérer sur le portail                              |
 
 Après correction du `.env` :
 

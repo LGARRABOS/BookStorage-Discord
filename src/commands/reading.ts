@@ -43,7 +43,9 @@ export const readingCommand: BotCommand = {
 
       const lines = response.data.map((work) => {
         const status = linkStatusEmoji(work.link_status);
-        const linkPart = work.link?.trim() ? ` — [${t(locale, 'reading_open_link')}](${work.link})` : '';
+        const linkPart = work.link?.trim()
+          ? ` — [${t(locale, 'reading_open_link')}](${work.link})`
+          : '';
         const prefix = status ? `${status} ` : '';
         return `• ${prefix}**${work.title}** — ch. ${work.chapter}${linkPart}`;
       });
