@@ -5,7 +5,7 @@ const catalog: Record<Locale, Record<string, string>> = {
     link_success:
       'Compte BookStorage lié avec succès. Vous pouvez utiliser `/reading`, `/stats` et `/chapter`.',
     link_invalid_token:
-      'Jeton API invalide ou expiré. Créez un jeton dans Profil → Jetons API sur votre instance BookStorage.',
+      'Jeton API invalide ou inaccessible. Vérifiez que le bot utilise la même URL que ce site (BOOKSTORAGE_BASE_URL) et que le jeton inclut lecture + écriture.',
     not_linked:
       'Compte non lié. Utilisez `/link token:<votre_jeton>` (créez un jeton dans Profil → Jetons API).',
     session_expired:
@@ -31,7 +31,7 @@ const catalog: Record<Locale, Record<string, string>> = {
   en: {
     link_success: 'BookStorage account linked. You can use `/reading`, `/stats`, and `/chapter`.',
     link_invalid_token:
-      'Invalid or expired API token. Create a token under Profile → API tokens on your BookStorage instance.',
+      'Invalid or unreachable API token. Ensure the bot BOOKSTORAGE_BASE_URL matches this site and the token has read + write scopes.',
     not_linked:
       'Account not linked. Use `/link token:<your_token>` (create a token under Profile → API tokens).',
     session_expired: 'Session expired or token revoked. Re-link with `/link token:<your_token>`.',
