@@ -2,6 +2,8 @@
 Description=BookStorage Discord Bot (optional integration)
 After=network.target bookstorage.service
 Wants=bookstorage.service
+StartLimitIntervalSec=120
+StartLimitBurst=5
 
 [Service]
 Type=simple
@@ -13,8 +15,6 @@ ExecStartPre=/usr/bin/node /opt/bookstorage-discord/dist/preflight.js
 ExecStart=/usr/bin/node /opt/bookstorage-discord/dist/index.js
 Restart=on-failure
 RestartSec=10
-StartLimitIntervalSec=120
-StartLimitBurst=5
 
 StandardOutput=journal
 StandardError=journal

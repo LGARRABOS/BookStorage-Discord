@@ -4,6 +4,7 @@ import { commandsByName } from './commands/index.js';
 import { LinkStorage } from './storage/links.js';
 
 async function main(): Promise<void> {
+  console.log('Starting BookStorage Discord bot…');
   const config = loadConfig();
   const links = new LinkStorage(config.LINK_DB_PATH, getEncryptionKey(config));
 
