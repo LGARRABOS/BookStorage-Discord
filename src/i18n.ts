@@ -2,16 +2,14 @@ import type { Locale } from './config.js';
 
 const catalog: Record<Locale, Record<string, string>> = {
   fr: {
-    link_dm_only:
-      'La commande `/link` est réservée aux messages privés. Ouvrez une conversation avec ce bot et réessayez.',
     link_success:
       'Compte BookStorage lié avec succès. Vous pouvez utiliser `/reading`, `/stats` et `/chapter`.',
     link_invalid_token:
       'Jeton API invalide ou expiré. Créez un jeton dans Profil → Jetons API sur votre instance BookStorage.',
     not_linked:
-      'Compte non lié. Envoyez `/link token:<votre_jeton>` en message privé (créez un jeton dans Profil → Jetons API).',
+      'Compte non lié. Utilisez `/link token:<votre_jeton>` (créez un jeton dans Profil → Jetons API).',
     session_expired:
-      'Session expirée ou jeton révoqué. Reliez votre compte avec `/link` en message privé.',
+      'Session expirée ou jeton révoqué. Reliez votre compte avec `/link token:<votre_jeton>`.',
     insufficient_scope:
       'Permissions insuffisantes sur le jeton API. Scopes requis : `works:read` (lecture) et `works:write` (chapitres).',
     rate_limited: 'Trop de requêtes. Réessayez dans quelques instants.',
@@ -31,14 +29,12 @@ const catalog: Record<Locale, Record<string, string>> = {
     unknown_error: 'Une erreur inattendue est survenue.',
   },
   en: {
-    link_dm_only:
-      'The `/link` command only works in DMs. Open a private conversation with this bot and try again.',
     link_success: 'BookStorage account linked. You can use `/reading`, `/stats`, and `/chapter`.',
     link_invalid_token:
       'Invalid or expired API token. Create a token under Profile → API tokens on your BookStorage instance.',
     not_linked:
-      'Account not linked. Send `/link token:<your_token>` in a DM (create a token under Profile → API tokens).',
-    session_expired: 'Session expired or token revoked. Re-link with `/link` in a DM.',
+      'Account not linked. Use `/link token:<your_token>` (create a token under Profile → API tokens).',
+    session_expired: 'Session expired or token revoked. Re-link with `/link token:<your_token>`.',
     insufficient_scope:
       'Insufficient API token scopes. Required: `works:read` (read) and `works:write` (chapters).',
     rate_limited: 'Too many requests. Please try again shortly.',

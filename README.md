@@ -75,7 +75,7 @@ Avec `DISCORD_GUILD_ID` renseigné, les commandes slash apparaissent **immédiat
 1. Installer le bot sur le serveur (section suivante) ou en local ([développement](#installation-locale-développement))
 2. Renseigner `.env` avec le token, le client ID, le guild ID de test, et `BOOKSTORAGE_BASE_URL` pointant vers votre prod (ou staging)
 3. `npm run register-commands` puis démarrer le bot
-4. En **message privé** au bot : `/link token:bs_…` (jeton créé sur BookStorage)
+4. Sur le serveur ou en MP : `/link token:bs_…` (jeton créé sur BookStorage) — la réponse est **visible par vous seul**
 5. Tester `/reading`, `/stats`, `/chapter titre:… action:+1` sur le serveur de test
 
 ### 4. Passage en **production** Discord
@@ -185,10 +185,9 @@ sudo systemctl status bookstorage-discord
 ## Lier son compte BookStorage
 
 1. Sur BookStorage : **Profil → Jetons API** → créer un jeton « Discord » (`works:read` + `works:write`)
-2. Ouvrir une **conversation privée** avec le bot sur Discord
-3. `/link token:<votre_jeton>`
+2. Sur le serveur ou en message privé au bot : `/link token:<votre_jeton>`
 
-`/link` est **refusé en salon** (sécurité). Le jeton n’est jamais réaffiché.
+La réponse de `/link` est **éphémère** (seul vous la voyez), y compris en salon. Le jeton n’est jamais réaffiché dans le chat public.
 
 Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra au prochain appel avec une erreur de session.
 
@@ -198,7 +197,7 @@ Révoquer l’accès : supprimer le jeton sur BookStorage — le bot répondra a
 
 | Commande                        | Description                                    |
 | ------------------------------- | ---------------------------------------------- |
-| `/link token:`                  | Lie le compte (DM uniquement)                  |
+| `/link token:`                  | Lie le compte (réponse éphémère, salon ou MP)  |
 | `/reading`                      | Œuvres en cours (`status=reading`, 15 max)     |
 | `/stats`                        | Statistiques globales                          |
 | `/chapter titre: action:+1\|-1` | Incrémente ou décrémente un chapitre par titre |
