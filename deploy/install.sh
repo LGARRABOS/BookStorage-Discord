@@ -111,10 +111,17 @@ print_ok "Dépendances système OK"
 
 # --- Clone / mise à jour ---
 print_step "4/6" "Code source dans $APP_DIR..."
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
+
 if [ -d "$APP_DIR/.git" ]; then
-	git -C "$APP_DIR" pull --ff-only origin main || print_warn "git pull échoué — vérifiez manuellement"
+	if ! git -C "$APP_DIR" pull --ff-only origin main; then
+		print_warn "git pull root échoué — tentative en tant que $APP_USER..."
+		sudo -u "$APP_USER" git -C "$APP_DIR" pull --ff-only origin main \
+			|| die "git pull impossible dans $APP_DIR (safe.directory / droits)"
+	fi
 else
 	git clone "$REPO_URL" "$APP_DIR"
+	git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 fi
 mkdir -p "$APP_DIR/data"
 chown -R "$APP_USER:$APP_GROUP" "$APP_DIR"

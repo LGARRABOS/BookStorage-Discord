@@ -20,7 +20,9 @@ fi
 }
 
 echo "Mise à jour dans $APP_DIR..."
-git -C "$APP_DIR" pull --ff-only origin main
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
+git -C "$APP_DIR" pull --ff-only origin main \
+	|| sudo -u "$APP_USER" git -C "$APP_DIR" pull --ff-only origin main
 chown -R "$APP_USER:$APP_GROUP" "$APP_DIR"
 sudo -u "$APP_USER" bash -c "cd '$APP_DIR' && npm ci && npm run build"
 [ -f "$APP_DIR/dist/index.js" ] || { echo "Build échoué." >&2; exit 1; }
