@@ -1,0 +1,28 @@
+[Unit]
+Description=BookStorage Discord Bot (optional integration)
+After=network.target bookstorage.service
+Wants=bookstorage.service
+
+[Service]
+Type=simple
+User=bookstorage
+Group=bookstorage
+WorkingDirectory=/opt/bookstorage-discord
+EnvironmentFile=-/opt/bookstorage-discord/.env
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bookstorage-discord
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/bookstorage-discord
+RestrictAddressFamilies=AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
